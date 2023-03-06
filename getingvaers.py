@@ -15,8 +15,9 @@ def get_var(vars):
     Make.column = 0
     Make.row = 0
     for var in vars:
-        if var not in blacklist:
+        if var not in blacklist and not var.startswith("__"):
             Slist.append(var)
+    print(Slist)
     for var in Slist:
         if Make.column == round(math.sqrt(len(Slist))):
             Make.column = 0
@@ -28,10 +29,10 @@ def get_var(vars):
 
 
 class Make():
-
     def update(self, event):
-        print(eval(self.var), self.entry.get())
-        self.result["text"] = self.entry.get()
+        v = self.entry.get()
+        self.result["text"] = f"{self.var} = {eval(v)}"
+        #self.content["text"] = f"{v} is {type(eval(v))} \n equals = '{eval(v)}'"
 
     def __init__(self, var):
         self.var = var
@@ -42,7 +43,7 @@ class Make():
             background = "gray"
         )
         self.frame.grid(row=self.row, column=self.column, padx=5, pady=5)
-        tk.Label(
+        self.content = tk.Label(
             master = self.frame, 
             text = f"{self.var} is {type(eval(self.var))} \n equals = '{eval(self.var)}'"
         ).grid(padx=5, pady=5)
@@ -62,8 +63,10 @@ class Make():
             self.entry.bind("<Return>", self.update)
 
 blacklist = ["var"]
-for var in dir():
-    blacklist.append(var)
+for dont_use_this_variable in dir():
+    blacklist.append(dont_use_this_variable)
+
+del(dont_use_this_variable)
 
 vad = 2
 dar = "streee"
@@ -76,5 +79,10 @@ alvar = (25, 69)
 virgin = "yes"
 
 get_var(dir())
+
+
+#get_var(dir())
+
+#get_var(dir())
 
 win.mainloop()
