@@ -11,46 +11,55 @@ row = 0
 column = 0
 
 def get_var(vars):
-    global row, column
     Slist = []
+    Make.column = 0
+    Make.row = 0
     for var in vars:
         if var not in blacklist:
             Slist.append(var)
-
     for var in Slist:
-        if column == round(math.sqrt(len(Slist))):
-            column = 0
-            row += 1
-            win.columnconfigure(row, weight=1, minsize=75)
-            win.rowconfigure(row, weight=1, minsize=50)
+        if Make.column == round(math.sqrt(len(Slist))):
+            Make.column = 0
+            Make.row += 1
+            win.columnconfigure(Make.column, weight=1, minsize=75)
+            win.rowconfigure(Make.row, weight=1, minsize=50)
+        square = Make(var)
+        Make.column += 1
 
-        frame = tk.Frame(
+
+class Make():
+
+    def update(self, event):
+        print(eval(self.var), self.entry.get())
+        self.result["text"] = self.entry.get()
+
+    def __init__(self, var):
+        self.var = var
+        self.frame = tk.Frame(
             master = win,
             relief = tk.RAISED,
             borderwidth = 0.3,
             background = "gray"
         )
-        frame.grid(row=row, column=column, padx=5, pady=5)
+        self.frame.grid(row=self.row, column=self.column, padx=5, pady=5)
         tk.Label(
-            master = frame, 
-            text = f"{var} is {type(eval(var))} \n equals = '{eval(var)}'"
+            master = self.frame, 
+            text = f"{self.var} is {type(eval(self.var))} \n equals = '{eval(self.var)}'"
         ).grid(padx=5, pady=5)
 
-        if type(eval(var)) in [float, int]:
-            entry = tk.Entry(
-                master = frame,
-                width = 10
-            ).grid(padx=5, pady=5)
-            result = tk.Label(
-                master = frame,
-                text = f"{var} = {eval(var)}",
+        if type(eval(self.var)) in [float, int]:
+            self.result = tk.Label(
+                master = self.frame,
+                text = f"{self.var} = {eval(self.var)}",
                 background = "gray"
-            ).grid(padx=5, pady=5)
-
-        column += 1
-
-        if isinstance(type(eval(var)), int):
-            var + 5
+            )
+            self.result.grid(padx=5, pady=5)
+            self.entry = tk.Entry(
+                master = self.frame,
+                width = 10
+            )
+            self.entry.grid(padx=5, pady=5)
+            self.entry.bind("<Return>", self.update)
 
 blacklist = ["var"]
 for var in dir():
